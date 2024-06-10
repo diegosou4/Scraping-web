@@ -4,10 +4,7 @@ import * as cheerio from 'cheerio';
 import * as jsonfile from 'jsonfile';
 import * as readline from 'node:readline';
 import fs from 'node:fs';
-
-
 import { stdin as input, stdout as output } from 'node:process';
-
 import { Geoinfo } from './geoinfo.js';
 
 
@@ -91,15 +88,18 @@ async function scrapeData(myinfo,rl,retries = 5) {
 // }  
 //main_new();
 
-function  new_f()
+function  open_json()
 {
+  
     fs.readFile('/home/diegmore/Desktop/git/take/Scaping-Uber/src/example.json', 'utf8', (err, data) => {
         if (err) {
           console.error(err);
           return;
         }
+        
         console.log(data);
       });
+      fs.writeFileSync('/home/diegmore/Desktop/git/take/Scaping-Uber/src/example.json', 'Hey there!');
 }
 
-new_f();
+open_json();
