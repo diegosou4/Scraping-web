@@ -11,6 +11,9 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.4",
-    "cheerio": "^1.0.0-rc.10"
+    "cheerio": "^1.0.0-rc.10",
+    "fs": "^0.0.1-security",
+    "jsonfile": "^6.1.0",
+    "require": "^2.4.20"
   }
 }

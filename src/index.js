@@ -1,11 +1,16 @@
 
 import axios from 'axios';
 import * as cheerio from 'cheerio';
+import * as jsonfile from 'jsonfile';
 import * as readline from 'node:readline';
+import fs from 'node:fs';
+
 
 import { stdin as input, stdout as output } from 'node:process';
 
 import { Geoinfo } from './geoinfo.js';
+
+
 
 async function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -54,33 +59,47 @@ async function scrapeData(myinfo,rl,retries = 5) {
     }
 }
   
+// async function main_new() {
 
-async function main_new() {
+    
+//     const rl = readline.createInterface({
+//             input: process.stdin,
+//             output: process.stdout
+//     });
+//     const myinfo = new Geoinfo("",0,0,"null");
+//     console.log("Bem Vindo ao sistema Crapping Uber!!\n");
+  
+//     rl.question("Informe o Nome do restaurante: ", (name) => {
+//         myinfo.setName(name);
+//     rl.question("Informe o Url do restaurante: ", async (url) => {
+//         myinfo.seturl(url);
+//     await scrapeData(myinfo,rl);
+//     rl.question("Deseja Adicionar ao Json: ?", async (check) =>
+//     {
+//         if(check === "1")
+//         {
+       
+//             const file = "./example.json";
+//             const data = jsonfile.readFile('example.json');
+//             console.log(data);
+//             console.log("Adicionado com sucesso");
+//         }
+//         rl.close();
+//     })
+//     })
+//     });
+// }  
+//main_new();
 
-    const rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout
-    });
-    const myinfo = new Geoinfo("",0,0,"null");
-    console.log("Bem Vindo ao sistema Crapping Uber!!\n");
-  
-    rl.question("Informe o Nome do restaurante: ", (name) => {
-        myinfo.setName(name);
-    rl.question("Informe o Url do restaurante: ", async (url) => {
-        myinfo.seturl(url);
-    await scrapeData(myinfo,rl);
-    rl.question("Deseja Adicionar ao Json: ?", async (check) =>
-    {
-        if(check === 1)
-            console.log("Adicionado com sucesso");
-        rl.close();
-    })
- 
-    })
+function  new_f()
+{
+    fs.readFile('/home/diegmore/Desktop/git/take/Scaping-Uber/src/example.json', 'utf8', (err, data) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        console.log(data);
+      });
+}
 
-    });
- 
-  }
-  
-  main_new();
-  
+new_f();
