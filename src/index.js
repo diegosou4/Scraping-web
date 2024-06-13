@@ -10,7 +10,7 @@ import { replace } from 'replace-json-property';
 import { myjsonData, updateJson } from './update.js';
 import * as util from 'util';
 import { createFileF } from './fileresult.js';
-
+import * as colors from 'colors';
 
 async function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -42,7 +42,7 @@ async function scrapeData(myinfo,rl,retries = 5) {
         const html = response.data;
         const $ = cheerio.load(html);
 
-     
+        console.clear();
         myinfo.setlatitude(keywordsearch(html,"latitude",",",1));
         myinfo.setlongitude(keywordsearch(html,"longitude","}",1));
         myinfo.setAdress(keywordsearch(html,"streetAddress","}",0));
@@ -58,7 +58,7 @@ async function scrapeData(myinfo,rl,retries = 5) {
             await delay(5000); // Wait for 5 seconds before retrying
             return scrapeData(url, retries - 1);
         } else {
-            console.error('Failed to fetch data:', error.message);
+            return(false);
         }
     }
 }
@@ -68,7 +68,7 @@ async function ask(rl, jsonData, numId,myInfo) {
    
     myInfo = new Geoinfo("", 0, 0, "null");
     myInfo.setID(numId);
-  
+    let done = false;
     const question = util.promisify(rl.question).bind(rl);
   
     const name = await question("Informe o Nome do restaurante: ");
@@ -77,8 +77,13 @@ async function ask(rl, jsonData, numId,myInfo) {
     const url = await question("Informe o Url do restaurante: ");
     myInfo.seturl(url);
   
-    await scrapeData(myInfo, rl);
-  
+    done = await scrapeData(myInfo, rl);
+    while (done == false)
+    {
+        const url = await question("O url informado Esta incorreto, informe um novo: ");
+        myInfo.seturl(url);
+        done = await scrapeData(myInfo, rl);
+    }
     const check = await question("Deseja Adicionar ao Json: (1 - Sim, 2 - Não, 3 - Sim e Sair): ");
   
     if (check === "1") {
@@ -107,8 +112,14 @@ async function ask(rl, jsonData, numId,myInfo) {
         locations : null
    };
     try {
-      
-      console.log("Bem Vindo ao sistema Crapping Uber!!\n");
+        console.log("/******************************************************************************************\\".blue);
+        console.log("/******************************************************************************************\\".blue);
+        console.log("/******************************************************************************************\\".blue);
+        console.log("/*************************Bem Vindo ao sistema Crapping Uber!!*****************************\\".blue);
+        console.log("/******************************************************************************************\\".blue);
+        console.log("/******************************************************************************************\\".blue);
+        console.log("/*******************************************************************************diegmore***\\".blue);
+        console.log("\n");
       while (true) {
         jsonData[numId] = await myjsonData();
         const result = await ask(rl, jsonData[numId], numId,myInfo[numId]);
@@ -132,19 +143,20 @@ async function ask(rl, jsonData, numId,myInfo) {
         if(numId > 1)
         {
             combinetJson.locations = jsonData[0].locations.concat(jsonData[1].locations);
-        }else{
-            let i = 2;
-            while(i != numId)
-            {
-                combinetJson.locations = jsonData[i - 1].locations.concat(jsonData[i].locations);
-            }
+        }
+        let i = 2;
+        while(i != numId)
+        {
+            combinetJson.locations = combinetJson.locations.concat(jsonData[i].locations);
+            i++;
+        }
 
         }
-    }
-    createFileF(combinetJson);
+        createFileF(combinetJson);
+}
+    
  
    
-  }
   
 main_new();
   

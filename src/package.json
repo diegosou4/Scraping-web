@@ -12,6 +12,8 @@
   "dependencies": {
     "axios": "^0.21.4",
     "cheerio": "^1.0.0-rc.10",
+    "colores": "^1.0.1",
+    "colors": "^1.4.0",
     "fs": "^0.0.1-security",
     "jsonfile": "^6.1.0",
     "replace-json-property": "^1.9.0",
