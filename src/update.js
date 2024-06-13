@@ -19,10 +19,10 @@ export async function updateJson(jsonData, myinfo, id)
     }
   
     jsonData.locations[0].address = myinfo.getAdress();
-    jsonData.locations[0].longitude = myinfo.getLongitude();
+    jsonData.locations[0].longitude = parseFloat(myinfo.getLongitude());
     jsonData.locations[0].elementType = 1;
     jsonData.locations[0].orderIndex = myinfo.getID();
-    jsonData.locations[0].latitude = myinfo.getLatitude();
+    jsonData.locations[0].latitude = parseFloat(myinfo.getLatitude());
     jsonData.locations[0].groupId = 0;
     jsonData.locations[0].name = myinfo.getName();
     jsonData.locations[0].locationId = myinfo.getID();

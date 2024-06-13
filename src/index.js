@@ -9,21 +9,21 @@ import { Geoinfo } from './geoinfo.js';
 import { replace } from 'replace-json-property';
 import { myjsonData, updateJson } from './update.js';
 import * as util from 'util';
-
+import { createFileF } from './fileresult.js';
 
 
 async function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
                                                                                                 
-function keywordsearch(content,keyword, char)
+function keywordsearch(content,keyword, char, i)
 {
     
     let keywordPosition = content.indexOf(keyword);
 
     if(keywordPosition !== -1)
     {
-        let startPosition = content.indexOf(":", keywordPosition);
+        let startPosition = content.indexOf(":", keywordPosition) + i;
         let endPosition = content.indexOf(char, startPosition);
         let textAfterKeyword = content.substring(startPosition, endPosition).trim();
         return(textAfterKeyword);
@@ -43,9 +43,9 @@ async function scrapeData(myinfo,rl,retries = 5) {
         const $ = cheerio.load(html);
 
      
-        myinfo.setlatitude(keywordsearch(html,"latitude",","));
-        myinfo.setlongitude(keywordsearch(html,"longitude","}"));
-        myinfo.setAdress(keywordsearch(html,"streetAddress","}"));
+        myinfo.setlatitude(keywordsearch(html,"latitude",",",1));
+        myinfo.setlongitude(keywordsearch(html,"longitude","}",1));
+        myinfo.setAdress(keywordsearch(html,"streetAddress","}",0));
         console.log(`Nome: ${myinfo.getName()}`);
         console.log(`Endereco: ${myinfo.getAdress()}`)
         console.log(`Latitude: ${myinfo.getLatitude()}`);
@@ -102,7 +102,10 @@ async function ask(rl, jsonData, numId,myInfo) {
       input: process.stdin,
       output: process.stdout
     });
-  
+    const combinetJson = {
+        version : null,
+        locations : null
+   };
     try {
       
       console.log("Bem Vindo ao sistema Crapping Uber!!\n");
@@ -118,14 +121,29 @@ async function ask(rl, jsonData, numId,myInfo) {
     } catch (error) {
       console.error("Deu ruim", error);
     } finally {
-      rl.close();
-     
+      rl.close();  
     }
-   const combinetJson = {
-        version : jsonData[0].version,
-        locations : jsonData[0].locations.concat(jsonData[1].locations)
-   };
-   console.log(combinetJson);
+    if(numId == 1)
+    {
+        combinetJson.version = jsonData[0].version;
+        combinetJson.locations = jsonData[0].locations;
+    }
+    else{
+        if(numId > 1)
+        {
+            combinetJson.locations = jsonData[0].locations.concat(jsonData[1].locations);
+        }else{
+            let i = 2;
+            while(i != numId)
+            {
+                combinetJson.locations = jsonData[i - 1].locations.concat(jsonData[i].locations);
+            }
+
+        }
+    }
+    createFileF(combinetJson);
+ 
+   
   }
   
 main_new();
