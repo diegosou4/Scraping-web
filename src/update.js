@@ -30,7 +30,7 @@ export async function updateJson(jsonData, myinfo, id)
 
 export function myjsonData() {
     return new Promise((resolve, reject) => {
-      fs.readFile('/home/diegmore/Desktop/git/Scaping-Uber/src/example.json', 'utf8', (err, data) => {
+      fs.readFile('example/example.json', 'utf8', (err, data) => {
         if (err) {
           reject(err); // Rejeita a Promise com o erro
         } else {
