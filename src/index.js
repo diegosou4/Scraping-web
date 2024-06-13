@@ -84,12 +84,13 @@ async function ask(rl, jsonData, numId,myInfo) {
         myInfo.seturl(url);
         done = await scrapeData(myInfo, rl);
     }
-    const check = await question("Deseja Adicionar ao Json: (1 - Sim, 2 - Não, 3 - Sim e Sair): ");
+    const check = await question("Deseja Adicionar ao Json: (1 - Sim, 2 - Sim e Sair): ");
   
     if (check === "1") {
       await updateJson(jsonData, myInfo, numId);
       return 1;
-    } else if(check === "3") {
+    
+    } else if(check === "2") {
         await updateJson(jsonData, myInfo, numId);
         return 0;
     }else{

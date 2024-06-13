@@ -18,7 +18,9 @@ export function createFileF(combinetJson)
       if(err){
             return console.log('erro')
         }
-        console.log('Arquivo Criado');
+        console.clear();
+        console.log('Arquivo Criado'.blue);
+        console.log("Ate a proxima".blue)
     });
 }
 
