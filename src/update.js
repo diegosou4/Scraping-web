@@ -14,16 +14,18 @@ export async function updateJson(jsonData, myinfo, id)
     if(myinfo.getID() === 0)
     {
         jsonData.version = 1;
+    }else{
+      delete jsonData.version;
     }
- 
-    jsonData.locations[id - 1].address = myinfo.getAdress();
-    jsonData.locations[id - 1].longitude = myinfo.getLongitude();
-    jsonData.locations[id - 1].elementType = 1;
-    jsonData.locations[id - 1].orderIndex = myinfo.getID();
-    jsonData.locations[id - 1].latitude = myinfo.getLatitude();
-    jsonData.locations[id - 1].groupId = 0;
-    jsonData.locations[id - 1].name = myinfo.getName();
-    jsonData.locations[id - 1].locationId = myinfo.getID();
+  
+    jsonData.locations[0].address = myinfo.getAdress();
+    jsonData.locations[0].longitude = myinfo.getLongitude();
+    jsonData.locations[0].elementType = 1;
+    jsonData.locations[0].orderIndex = myinfo.getID();
+    jsonData.locations[0].latitude = myinfo.getLatitude();
+    jsonData.locations[0].groupId = 0;
+    jsonData.locations[0].name = myinfo.getName();
+    jsonData.locations[0].locationId = myinfo.getID();
 }
 
 export function myjsonData() {

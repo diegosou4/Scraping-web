@@ -1,5 +1,7 @@
-{   "version":1,
-    "locations":[
+{   
+    "version":1,
+    "locations":
+    [
     {"address":"",
     "longitude":0,
     "elementType":1,

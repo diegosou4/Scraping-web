@@ -15,7 +15,7 @@ import * as util from 'util';
 async function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
-
+                                                                                                
 function keywordsearch(content,keyword, char)
 {
     
@@ -64,8 +64,9 @@ async function scrapeData(myinfo,rl,retries = 5) {
 }
 
 
-async function ask(rl, jsonData, numId) {
-    const myInfo = new Geoinfo("", 0, 0, "null");
+async function ask(rl, jsonData, numId,myInfo) {
+   
+    myInfo = new Geoinfo("", 0, 0, "null");
     myInfo.setID(numId);
   
     const question = util.promisify(rl.question).bind(rl);
@@ -78,44 +79,53 @@ async function ask(rl, jsonData, numId) {
   
     await scrapeData(myInfo, rl);
   
-    const check = await question("Deseja Adicionar ao Json: (1 - Sim, 2 - Não): ");
+    const check = await question("Deseja Adicionar ao Json: (1 - Sim, 2 - Não, 3 - Sim e Sair): ");
   
     if (check === "1") {
       await updateJson(jsonData, myInfo, numId);
-      numId++;
       return 1;
-    } else {
-      return 0;
+    } else if(check === "3") {
+        await updateJson(jsonData, myInfo, numId);
+        return 0;
+    }else{
+        return 0;
     }
   }
 
 
 
   async function main_new() {
-    let numId = 1;
+    let numId = 0;
+    const myInfo = new Array(100).fill(null).map(() => ({}));
+    const jsonData = new Array(100).fill(null).map(() => ({}));
     const rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout
     });
   
     try {
-      const jsonData = await myjsonData();
+      
       console.log("Bem Vindo ao sistema Crapping Uber!!\n");
-  
       while (true) {
-        const result = await ask(rl, jsonData, numId);
-        if (result === 0) {
-          break;
-        }
+        jsonData[numId] = await myjsonData();
+        const result = await ask(rl, jsonData[numId], numId,myInfo[numId]);
         numId++;
+        if (result === 0) {
+        break;
+        }
+     
       }
     } catch (error) {
       console.error("Deu ruim", error);
     } finally {
       rl.close();
+     
     }
-  
-    console.log("Ola mundo");
+   const combinetJson = {
+        version : jsonData[0].version,
+        locations : jsonData[0].locations.concat(jsonData[1].locations)
+   };
+   console.log(combinetJson);
   }
   
 main_new();
