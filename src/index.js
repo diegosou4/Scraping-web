@@ -6,6 +6,9 @@ import * as readline from 'node:readline';
 import fs from 'node:fs';
 import { stdin as input, stdout as output } from 'node:process';
 import { Geoinfo } from './geoinfo.js';
+import { replace } from 'replace-json-property';
+import { myjsonData, updateJson } from './update.js';
+import * as util from 'util';
 
 
 
@@ -29,6 +32,7 @@ function keywordsearch(content,keyword, char)
 
 async function scrapeData(myinfo,rl,retries = 5) {
 
+        
     try {
         const response = await axios.get(myinfo.getUrl(), {
             headers: {
@@ -37,10 +41,13 @@ async function scrapeData(myinfo,rl,retries = 5) {
         });
         const html = response.data;
         const $ = cheerio.load(html);
-        console.clear();
-        console.log(`Nome: ${myinfo.getName()}`);
+
+     
         myinfo.setlatitude(keywordsearch(html,"latitude",","));
         myinfo.setlongitude(keywordsearch(html,"longitude","}"));
+        myinfo.setAdress(keywordsearch(html,"streetAddress","}"));
+        console.log(`Nome: ${myinfo.getName()}`);
+        console.log(`Endereco: ${myinfo.getAdress()}`)
         console.log(`Latitude: ${myinfo.getLatitude()}`);
         console.log(`Longitude: ${myinfo.getLongitude()}`);
         return(true);
@@ -55,51 +62,64 @@ async function scrapeData(myinfo,rl,retries = 5) {
         }
     }
 }
-  
-// async function main_new() {
 
-    
-//     const rl = readline.createInterface({
-//             input: process.stdin,
-//             output: process.stdout
-//     });
-//     const myinfo = new Geoinfo("",0,0,"null");
-//     console.log("Bem Vindo ao sistema Crapping Uber!!\n");
-  
-//     rl.question("Informe o Nome do restaurante: ", (name) => {
-//         myinfo.setName(name);
-//     rl.question("Informe o Url do restaurante: ", async (url) => {
-//         myinfo.seturl(url);
-//     await scrapeData(myinfo,rl);
-//     rl.question("Deseja Adicionar ao Json: ?", async (check) =>
-//     {
-//         if(check === "1")
-//         {
-       
-//             const file = "./example.json";
-//             const data = jsonfile.readFile('example.json');
-//             console.log(data);
-//             console.log("Adicionado com sucesso");
-//         }
-//         rl.close();
-//     })
-//     })
-//     });
-// }  
-//main_new();
 
-function  open_json()
-{
+async function ask(rl, jsonData, numId) {
+    const myInfo = new Geoinfo("", 0, 0, "null");
+    myInfo.setID(numId);
   
-    fs.readFile('/home/diegmore/Desktop/git/take/Scaping-Uber/src/example.json', 'utf8', (err, data) => {
-        if (err) {
-          console.error(err);
-          return;
+    const question = util.promisify(rl.question).bind(rl);
+  
+    const name = await question("Informe o Nome do restaurante: ");
+    myInfo.setName(name);
+  
+    const url = await question("Informe o Url do restaurante: ");
+    myInfo.seturl(url);
+  
+    await scrapeData(myInfo, rl);
+  
+    const check = await question("Deseja Adicionar ao Json: (1 - Sim, 2 - Não): ");
+  
+    if (check === "1") {
+      await updateJson(jsonData, myInfo, numId);
+      numId++;
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+
+
+
+  async function main_new() {
+    let numId = 1;
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+  
+    try {
+      const jsonData = await myjsonData();
+      console.log("Bem Vindo ao sistema Crapping Uber!!\n");
+  
+      while (true) {
+        const result = await ask(rl, jsonData, numId);
+        if (result === 0) {
+          break;
         }
-        
-        console.log(data);
-      });
-      fs.writeFileSync('/home/diegmore/Desktop/git/take/Scaping-Uber/src/example.json', 'Hey there!');
-}
+        numId++;
+      }
+    } catch (error) {
+      console.error("Deu ruim", error);
+    } finally {
+      rl.close();
+    }
+  
+    console.log("Ola mundo");
+  }
+  
+main_new();
+  
 
-open_json();
+
+
