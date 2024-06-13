@@ -120,6 +120,7 @@ async function ask(rl, jsonData, numId,myInfo) {
         console.log("/******************************************************************************************\\".blue);
         console.log("/*******************************************************************************diegmore***\\".blue);
         console.log("\n");
+        await delay(3000);
       while (true) {
         jsonData[numId] = await myjsonData();
         const result = await ask(rl, jsonData[numId], numId,myInfo[numId]);
