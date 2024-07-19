@@ -26,7 +26,7 @@ function keywordsearch(content,keyword, char, i)
         let startPosition = content.indexOf(":", keywordPosition) + i;
         let endPosition = content.indexOf(char, startPosition);
         let textAfterKeyword = content.substring(startPosition, endPosition).trim();
-        return(textAfterKeyword);
+        return textAfterKeyword.replace(/"/g, "");
     }
 }
 
